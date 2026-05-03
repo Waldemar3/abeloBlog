@@ -6,50 +6,32 @@ namespace App\Controllers;
 
 use App\Core\Config;
 use App\Core\Controller;
-use App\Core\Pagination;
 use App\Models\Article;
-use App\Models\Category;
+use App\Services\ArticleService;
+use App\Services\CategoryService;
 
 final class CategoryController extends Controller
 {
-    private Category $categoryModel;
-    private Article $articleModel;
-
-    public function __construct()
-    {
+    public function __construct(
+        private readonly CategoryService $categoryService,
+        private readonly ArticleService $articleService
+    ) {
         parent::__construct();
-        $this->categoryModel = new Category();
-        $this->articleModel = new Article();
     }
 
     public function show(array $params): void
     {
-        $category = $this->categoryModel->findBySlug($params['slug']);
-
-        if ($category === false) {
-            http_response_code(404);
-            $this->render('errors/404');
-            return;
-        }
+        $category = $this->categoryService->getBySlug($params['slug']);
 
         $sort = $this->resolveSort();
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $perPage = Config::get('pagination.per_page', 6);
 
-        $total = $this->articleModel->countByCategory($category['id']);
-        $pagination = new Pagination($total, $perPage, $page);
-
-        $articles = $this->articleModel->findByCategory(
-            $category['id'],
-            $sort,
-            $pagination->perPage,
-            $pagination->offset
-        );
+        $result = $this->articleService->getPaginatedByCategory($category['id'], $sort, $page);
 
         $this->render('category/show', [
             'category' => $category,
-            'articles' => $articles,
-            'pagination' => $pagination->toArray(),
+            'articles' => $result['items'],
+            'pagination' => $result['pagination'],
             'sort' => $sort,
             'pageTitle' => $category['name'] . ' — ' . Config::get('app.name'),
         ]);

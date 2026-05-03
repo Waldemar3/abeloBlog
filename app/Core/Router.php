@@ -8,6 +8,8 @@ final class Router
 {
     private array $routes = [];
 
+    public function __construct(private readonly Container $container) {}
+
     public function get(string $pattern, array $handler): void
     {
         $this->routes[] = [
@@ -30,7 +32,7 @@ final class Router
 
             if ($params !== null) {
                 [$controllerClass, $action] = $route['handler'];
-                (new $controllerClass())->$action($params);
+                $this->container->make($controllerClass)->$action($params);
                 return;
             }
         }

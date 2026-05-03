@@ -5,22 +5,19 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Models\Category;
+use App\Services\CategoryService;
 
 final class HomeController extends Controller
 {
-    private Category $categoryModel;
-
-    public function __construct()
+    public function __construct(private readonly CategoryService $categoryService)
     {
         parent::__construct();
-        $this->categoryModel = new Category();
     }
 
     public function index(array $params = []): void
     {
         $this->render('home/index', [
-            'categories' => $this->categoryModel->findWithLatestArticles(3),
+            'categories' => $this->categoryService->getWithLatestArticles(3),
         ]);
     }
 }
