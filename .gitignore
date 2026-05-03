@@ -1,0 +1,10 @@
+/vendor/
+/var/cache/*
+/var/compiled_templates/*
+/var/logs/*
+!var/cache/.gitkeep
+!var/compiled_templates/.gitkeep
+!var/logs/.gitkeep
+.env
+.DS_Store
+*.log

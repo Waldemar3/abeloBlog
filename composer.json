@@ -1,0 +1,20 @@
+{
+    "name": "abelo/blog",
+    "description": "Blog",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "smarty/smarty": "^4.5",
+        "fakerphp/faker": "^1.23"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\": "database/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
